@@ -1,0 +1,17 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+
+    [System.Serializable]
+public class Quest
+{
+    public string quest;
+    public bool questDelivered;
+
+    public void Initialize()
+    {
+        quest = "";
+        questDelivered = true;
+    }
+}
