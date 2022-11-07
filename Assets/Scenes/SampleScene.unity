@@ -261,20 +261,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &137894479
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2044972653}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b8957daef5401d345b5a3cae60565d61, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  function: "Chave do Galp\xE3o"
-  dialogue: {fileID: 1284045487}
 --- !u!1 &164021933
 GameObject:
   m_ObjectHideFlags: 0
@@ -449,15 +435,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 311609944}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.5, y: 1.75, z: 1.7}
-  m_LocalScale: {x: 2.5, y: 2, z: 4}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.032000005, y: 0.485, z: 9.77}
+  m_LocalScale: {x: 2.5, y: 2, z: 20}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1008936919}
-  - {fileID: 519309356}
-  m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_Children: []
+  m_Father: {fileID: 1008936919}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &369193456
 GameObject:
@@ -690,17 +674,17 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 519309355}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.425}
-  m_LocalScale: {x: 0.4, y: 0.5, z: 0.25}
+  m_LocalPosition: {x: 0, y: 0, z: 1.2700005}
+  m_LocalScale: {x: 1, y: 1, z: 5}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1983204997}
-  m_Father: {fileID: 311609948}
+  m_Father: {fileID: 1008936919}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 15.9, y: 1}
+  m_AnchoredPosition: {x: 39.718002, y: 2.4850001}
   m_SizeDelta: {x: 1920, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &519309357
@@ -1228,12 +1212,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1008936915}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.0128000025, y: -0.2425, z: -0.4885}
-  m_LocalScale: {x: 0.4, y: 0.5, z: 0.05}
+  m_LocalPosition: {x: 0.532, y: 1.265, z: -0.25399995}
+  m_LocalScale: {x: 1, y: 1, z: 0.2}
   m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 311609948}
-  m_RootOrder: 0
+  m_Children:
+  - {fileID: 311609948}
+  - {fileID: 519309356}
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &1008936920
 BoxCollider:
@@ -1280,10 +1266,12 @@ MonoBehaviour:
   door:
     NextScene: CombatScene
     KeyItemName: "Po\xE7\xE3o de Cura"
-  sentence:
-    name: 
-    sentence: "Preciso usar a po\xE7\xE3o quando for entrar"
-    buttonText: "Usar po\xE7\xE3o"
+    locked: 1
+  dialogue:
+    sentences:
+    - name: 
+      sentence: "Preciso estar com a vida maxima para entrar\t"
+      buttonText: Usar
 --- !u!1 &1284045482
 GameObject:
   m_ObjectHideFlags: 0
@@ -1398,6 +1386,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aac09c7b58bceb447b0f7d0d6c0ed59c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Player: {fileID: 507229524}
   nameText: {fileID: 900509627}
   dialogueText: {fileID: 743875528101567501}
   actionButton: {fileID: 1988652777}
@@ -1419,6 +1408,9 @@ MonoBehaviour:
   _door:
     NextScene: 
     KeyItemName: 
+    locked: 0
+  _setDoor: 0
+  _unlocking: 0
   _endDialogue: 0
 --- !u!1 &1291463417
 GameObject:
@@ -2017,7 +2009,6 @@ GameObject:
   - component: {fileID: 2044972657}
   - component: {fileID: 2044972659}
   - component: {fileID: 2044972654}
-  - component: {fileID: 137894479}
   - component: {fileID: 2044972660}
   - component: {fileID: 2044972661}
   m_Layer: 0

@@ -6,12 +6,15 @@ public class DialogueDoor : MonoBehaviour
 {
     [SerializeField] protected UI_interaction _dialogueBox;
     [SerializeField] protected Door door;
-    [SerializeField] protected Sentence sentence;
+    [SerializeField] protected Dialogue dialogue;
 
     public void TriggerDialogue()
     {
-        _dialogueBox.StartDialogue(sentence);
+        _dialogueBox.StartDialogue(dialogue);
     }
+
+
+    
 
     private void OnTriggerEnter(Collider other)
     {
@@ -19,6 +22,7 @@ public class DialogueDoor : MonoBehaviour
         {
             _dialogueBox.SetDoor(door);
             _dialogueBox.AppearText();
+            TriggerDialogue();
         }
     }
 

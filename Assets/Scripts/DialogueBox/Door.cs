@@ -7,9 +7,11 @@ public class Door
 {
     public string NextScene;
     public string KeyItemName;
+    public bool locked;
 
     public void Initialize()
     {
+        locked = false;
         KeyItemName = NextScene = "";
     }
 }

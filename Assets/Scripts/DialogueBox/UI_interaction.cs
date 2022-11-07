@@ -7,6 +7,8 @@ using UnityEngine.SceneManagement;
 
 public class UI_interaction : MonoBehaviour
 {
+    [SerializeField] protected movement Player;
+
     [SerializeField] protected TMP_Text nameText;
     [SerializeField] protected TMP_Text dialogueText;
     [SerializeField] protected GameObject actionButton;
@@ -19,10 +21,13 @@ public class UI_interaction : MonoBehaviour
     [SerializeField] protected Item _item; 
     [SerializeField] protected Door _door;
 
+    [SerializeField] protected bool _setDoor;
+    [SerializeField] protected bool _unlocking;
     [SerializeField] protected bool _endDialogue;
 
     protected void Start()
     {
+        _unlocking = _setDoor = false;
         _item.Initialize();
         _quest.Initialize();
         _dialogue.Initialize();
@@ -47,36 +52,11 @@ public class UI_interaction : MonoBehaviour
         DisplayName(_sentence.name);
 
         StartCoroutine(TypeSentence(_sentence.sentence));
-
-        if (_door.NextScene != "")
-        {
-            if (_sentence.buttonText == "Entrar" || _sentence.buttonText == "Sair")
-            {
-                SceneManager.LoadScene(_door.NextScene);
-            }
-            if (_sentence.buttonText.StartsWith("Usar"))
-            {
-                movement player;
-                player = FindObjectOfType<movement>();
-                if (player != null)
-                {
-                    if (player.Search(_door.KeyItemName))
-                    {
-                        player.UseItem(_door.KeyItemName);
-                        SceneManager.LoadScene(_door.NextScene);
-                    }
-                    else
-                    {
-                        string lockedsentence = "Não tenho o que é preciso para entrar...";
-                        StartCoroutine(LockedDoor(lockedsentence));
-                    }
-                }
-            }
-        }
     }
 
     public void EndDialogue()
     {
+        _setDoor = false;
         _dialogue = null;
         _sentence = null;
         _item = null;
@@ -99,16 +79,79 @@ public class UI_interaction : MonoBehaviour
     {
         _door = null;
         _door = door;
+        _setDoor = true;
     }
 
-    public void ActivateFunction(UnityEngine.Events.UnityAction call)
+    public void CheckDoor(string buttonText)
     {
-        actionButton.GetComponent<Button>().onClick.AddListener(call);
+        if (!_door.locked)
+        {
+            Debug.Log("kk n ta trancado");
+            if (buttonText == "Entrar" || buttonText == "Sair")
+            {
+                Debug.Log("CARREGANDO");
+                actionButton.GetComponent<Button>().onClick.AddListener(NextScene);
+            }
+        }
+        else
+        {
+            Debug.Log("ta trancado");
+            if (buttonText == "Usar")
+            {
+                actionButton.GetComponent<Button>().onClick.AddListener(UnlockingDoor);
+                _unlocking = true;
+            }
+        }
     }
 
-    public void DesactivateFunction(UnityEngine.Events.UnityAction call)
+    public void NextScene()
     {
-        actionButton.GetComponent<Button>().onClick.RemoveListener(call);
+        SceneManager.LoadScene(_door.NextScene);
+        EndDialogue();
+    }
+
+    public void UnlockingDoor()
+    {
+        Debug.Log("USANDO");
+        if (Player.Search(_door.KeyItemName))
+        {
+            Debug.Log("TENHO");
+            Player.UseItem(_door.KeyItemName);
+
+            Sentence s = new Sentence();
+
+            s.name = "";
+            s.sentence = "Você conseguiu desbloquear a passagem...";
+            s.buttonText = "Entrar";
+
+            _dialogue.sentences.Add(s);
+            
+            s = new Sentence();
+            s.name = "";
+            s.sentence = "Entrando...";
+            s.buttonText = "";
+            
+            _dialogue.sentences.Add(s);
+
+            _dialogue.sentences.RemoveAt(0);
+            _sentence = _dialogue.sentences[0];
+
+            string sentence = _sentence.sentence;
+            _door.locked = false;
+            actionButton.GetComponent<Button>().onClick.AddListener(NextScene);
+            StartCoroutine(TypeSentence(sentence));            
+        }
+        else
+        {
+            Debug.Log("Não tenho");
+            string lockedsentence = "Não tenho o que é preciso para entrar...";
+
+            StartCoroutine(LockedDoor(lockedsentence));
+        }
+
+        actionButton.GetComponent<Button>().onClick.RemoveListener(UnlockingDoor);
+        Debug.Log("unlocking");
+        _unlocking = false;
     }
 
     void DisplayName(string name)
@@ -132,19 +175,28 @@ public class UI_interaction : MonoBehaviour
         if (_sentence.name != nameText.text)
             DisplayName(_sentence.name);
         StartCoroutine(TypeSentence(sentence));
-        if (_dialogue.sentences.Count == 1)
-        { 
-            actionButton.GetComponent<Button>().onClick.AddListener(HidenText);
-            if (!_quest.questDelivered && _quest.quest != "")
+
+        if (_setDoor)
+            CheckDoor(_sentence.buttonText);
+        else
+        {
+            if (_dialogue.sentences.Count == 1)
             {
-                FindObjectOfType<movement>().setQuest(_quest.quest);
-                _quest.questDelivered = true;
+                actionButton.GetComponent<Button>().onClick.AddListener(HidenText);
+                if (!_quest.questDelivered && _quest.quest != "")
+                {
+                    Player.setQuest(_quest.quest);
+                    _quest.questDelivered = true;
+                }
             }
         }
     }
 
     public void DisplayNextSentence()
     {
+        if (_unlocking)
+            return;
+
         StopAllCoroutines();
         if (_dialogue.sentences.Count > 1)
         {
@@ -156,25 +208,26 @@ public class UI_interaction : MonoBehaviour
         if (_sentence.name != nameText.text)
             DisplayName(_sentence.name);
 
-        if (_dialogue.sentences.Count == 1)
+        if (_setDoor)
+            CheckDoor(_sentence.buttonText);
+        else if (_dialogue.sentences.Count == 1)
         {
-            StartCoroutine(TypeSentence(sentence));
             if (!_quest.questDelivered && _quest.quest != "")
             { 
-                FindObjectOfType<movement>().setQuest(_quest.quest); 
+                Player.setQuest(_quest.quest); 
                 _quest.questDelivered = true;
             }
             if (_sentence.buttonText == "Pegar")
             {
-                FindObjectOfType<movement>().setItem(_item);
+                Player.setItem(_item);
                _item.itemDelivered = true;
             }
 
             actionButton.GetComponent<Button>().onClick.AddListener(HidenText);
-
-            return;
         }             
         
+        
+
         StartCoroutine(TypeSentence(sentence));
     }
 
@@ -189,7 +242,8 @@ public class UI_interaction : MonoBehaviour
         }
 
         dialogueButton.text = _sentence.buttonText;
-        actionButton.SetActive(true);
+        if(dialogueButton.text != "")
+            actionButton.SetActive(true);
     }
 
     IEnumerator LockedDoor(string sentence)
@@ -220,7 +274,7 @@ public class UI_interaction : MonoBehaviour
 
     public void HidenText()
     {
-        actionButton.GetComponent<Button>().onClick.RemoveListener(HidenText);
+        actionButton.GetComponent<Button>().onClick.RemoveAllListeners();
         StopAllCoroutines();
         dialogueText.text = "";
         dialogueBox.SetActive(false);
