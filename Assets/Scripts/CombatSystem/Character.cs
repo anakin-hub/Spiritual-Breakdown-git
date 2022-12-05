@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum SKILLSTATUS { READY, RECHARGING, USED}
+
 public enum TURNSTATE { WAITING, ACTION, DEAD}
 
 public class Character : MonoBehaviour
@@ -10,8 +10,13 @@ public class Character : MonoBehaviour
     public string UnitName;
     public int unitLevel;
     public TURNSTATE state;
+    public BattleHUD _hud;
+
     public int turn;
     protected bool turnStarted;
+
+    [SerializeField] protected Animator _animator;
+
     [SerializeField] protected bool target;
 
     //atributos
@@ -28,6 +33,11 @@ public class Character : MonoBehaviour
     [SerializeField] protected int _atkfisico; //valor que é adicionado no sorteio do numero do ataque fisico (aumenta a chance de acerto)
     [SerializeField] protected int _atkmagico; //valor que é adicionado no sorteio do numero do ataque magico (aumenta a chance de acerto)
     [SerializeField] protected int _critRate;
+
+    public SkillDamage _ataque;
+    public SkillDamage _skillDano;
+    public SkillHeal _skillCura;
+
     //Equipamentos
     public Weapon _arma;
     public Equip _armadura;
@@ -35,13 +45,11 @@ public class Character : MonoBehaviour
     [SerializeField] protected List<Equip> equipamentos;
 
     Renderer _renderer;
-    bool dmgTaken;
 
     protected void Awake()
     {
         turn = 0;
         turnStarted = false;
-        dmgTaken = target = false;
         _bonusArmadura = 0;
         maxHP = 10 + _constituicao * 3;
         currentHP = maxHP;
@@ -63,6 +71,8 @@ public class Character : MonoBehaviour
         state = TURNSTATE.WAITING;
         
         _renderer = GetComponentInChildren<Renderer>();
+
+        _hud.SetHUD(this);
     }
 
     public int RollDice(int _dNumber)
@@ -96,6 +106,7 @@ public class Character : MonoBehaviour
 
     public int GetAtk()
     {
+        _animator.SetTrigger("Attacking");
         if (_arma.GetdmgType())
         {
             return GetAtkMagico();
@@ -103,6 +114,19 @@ public class Character : MonoBehaviour
         else
         {
             return GetAtkFisico();
+        }
+    }
+
+    public int GetPureAtk()
+    {
+        _animator.SetTrigger("Attacking");
+        if (_arma.GetdmgType())
+        {
+            return _atkmagico;
+        }
+        else
+        {
+            return _atkfisico;
         }
     }
 
@@ -149,8 +173,11 @@ public class Character : MonoBehaviour
 
     public bool TakeDamage(int dmg)
     {
-         currentHP-=dmg;
+        _animator.SetTrigger("Damaged");
 
+        currentHP-=dmg;
+
+        _hud.setHP(currentHP);
         StartCoroutine(FlashRed());
 
         if (currentHP <= 0)
@@ -161,7 +188,7 @@ public class Character : MonoBehaviour
 
     IEnumerator FlashRed()
     {
-        for(int i = 0; i < 2; i++)
+        do
         { 
         _renderer.material.color = Color.red;
 
@@ -170,7 +197,21 @@ public class Character : MonoBehaviour
         _renderer.material.color = Color.white;
 
         yield return new WaitForSeconds(0.3f);
-        }
+        }while (!_hud.GetReady());
+    }
+
+    IEnumerator FlashGreen()
+    {
+        do
+        {
+            _renderer.material.color = Color.green;
+
+            yield return new WaitForSeconds(0.3f);
+
+            _renderer.material.color = Color.white;
+
+            yield return new WaitForSeconds(0.3f);
+        } while (!_hud.GetReady());
     }
 
     public void Heal(int amount)
@@ -178,6 +219,9 @@ public class Character : MonoBehaviour
         currentHP += amount;
         if (currentHP > maxHP)
             currentHP = maxHP;
+
+        StartCoroutine(FlashGreen());
+        _hud.setHP(currentHP);
     }
 
     public void SetTarget(bool b)
@@ -187,5 +231,29 @@ public class Character : MonoBehaviour
     public bool GetTarget()
     {
         return target;
+    }
+
+    public bool Endturn()
+    {
+        if((_skillCura.GetSkillUsed() || _skillDano.GetSkillUsed() || _ataque.GetSkillUsed()) && _hud.GetReady())
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public bool Victory()
+    {
+        if (_skillCura.victory() || _skillDano.victory() || _ataque.victory())
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 }

@@ -26,7 +26,9 @@ public class Scene_Activator : MonoBehaviour
     {
         if (other.TryGetComponent(out movement move))
         {
-            autorized = move.Search(KeyName);
+            Inventory inventory = FindObjectOfType<Inventory>();
+
+            //autorized = move.Search(KeyName);
         }
     }
 }

@@ -7,7 +7,7 @@ public class PauseMenu : MonoBehaviour
 {
     public static bool GameIsPause;
     [SerializeField] protected GameObject PauseMenuUI;
-
+    [SerializeField] protected GameObject InventoryUI;
 
     void Update()
     {
@@ -27,6 +27,8 @@ public class PauseMenu : MonoBehaviour
 
     public void Resume()
     {
+        if(InventoryUI.activeSelf)
+            InventoryUI.SetActive(false);
         PauseMenuUI.SetActive(false);
         Time.timeScale = 1f;
         GameIsPause = false;
@@ -46,7 +48,10 @@ public class PauseMenu : MonoBehaviour
 
     public void OpenInventory()
     {
-        Debug.Log("inventario");
+        if (InventoryUI.activeSelf)
+            InventoryUI.SetActive(false);
+        else
+            InventoryUI.SetActive(true);
     }
 
     public void OpenQuests()

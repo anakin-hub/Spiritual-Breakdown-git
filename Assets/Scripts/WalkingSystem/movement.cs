@@ -4,35 +4,41 @@ using UnityEngine;
 
 public class movement : MonoBehaviour
 {
-
-    protected GameObject interaction;
-
     public float mSpeed;
 
     public CharacterController pc;
 
     Vector3 move;
 
-    [SerializeField] protected List<Item> Items;
+    public float movementX;
+    public float movementZ;
+
     [SerializeField] protected List<string> Quest;
 
-    [SerializeField] protected UI_interaction _dialogueBox;
+    [SerializeField] protected Inventory _inventory;
+
+    [SerializeField] protected Animator _animator;
+
+    [SerializeField] protected Transform _sprite;
+
+    void Start()
+    {
+        _inventory = FindObjectOfType<Inventory>();    
+        _sprite = GetComponentInChildren<Transform>();
+    }
 
     void Update()
     {
-        move = new Vector3(Input.GetAxisRaw("Horizontal"), 0f, Input.GetAxisRaw("Vertical")) * mSpeed;
+        movementZ = Input.GetAxisRaw("Vertical");
+        movementX = Input.GetAxisRaw("Horizontal");
 
-        //if (interaction != null)
-        //{
-        //    if (interaction.TryGetComponent(out item_int item))
-        //    {
-        //        if (Input.GetKeyDown(KeyCode.Space)) items.Add(item.pick_up());
-        //    }
-        //    else if (interaction.TryGetComponent(out Scene_Activator combat))
-        //    {
-        //        if (Input.GetKeyDown(KeyCode.Space)) combat.ChangeScene();
-        //    }
-        //}
+        _animator.SetFloat("speedX", movementX);
+
+        _animator.SetFloat("speedZ", movementZ);
+
+        bool flip = movementX < 0;
+        _sprite.rotation = Quaternion.Euler(new Vector3(0f, flip? 180f : 0f, 0f));
+        move = new Vector3(movementX, 0f, movementZ) * mSpeed;
     }
 
     void FixedUpdate()
@@ -42,17 +48,12 @@ public class movement : MonoBehaviour
 
     public bool Search(string item_name)
     {
-        for (int i = 0; i < Items.Count; i++)
-        {
-            if(Items[i].name == item_name) return true;
-        }
-
-        return false;
+        return _inventory.Search(item_name);
     }
 
     public void setItem(Item item)
     {
-        Items.Add(item);
+        _inventory.add(item);
     }
 
     public void setQuest(string quest)
@@ -62,12 +63,6 @@ public class movement : MonoBehaviour
 
     public void UseItem(string item_name)
     {
-        for (int i = 0; i < Items.Count; i++)
-        {
-            if (Items[i].name == item_name)
-            {
-                Items.RemoveAt(i);
-            }
-        }
+        _inventory.use(item_name);
     }
 }

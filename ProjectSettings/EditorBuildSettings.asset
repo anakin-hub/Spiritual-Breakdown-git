@@ -9,9 +9,27 @@ EditorBuildSettings:
     path: Assets/Scenes/MenuScene.unity
     guid: 2cf0174819238c44cb63c814a3b685a5
   - enabled: 1
+    path: Assets/Scenes/HouseScene.unity
+    guid: 1e2ed8c36df139546888d517f9f22014
+  - enabled: 1
+    path: Assets/Scenes/CityScene1.unity
+    guid: 284c97c74a00f2842a11c3764a00a05b
+  - enabled: 1
+    path: Assets/Scenes/BarScene.unity
+    guid: e44d23d0ae55e0e4f98a1bda202cb6bf
+  - enabled: 1
+    path: Assets/Scenes/CityScene2.unity
+    guid: 066150ef36d37fe4cac2b71d419804e8
+  - enabled: 1
+    path: Assets/Scenes/Combat 1.unity
+    guid: d426107cc2d353a4da12a9c8321fe148
+  - enabled: 0
     path: Assets/Scenes/SampleScene.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
-  - enabled: 1
-    path: Assets/Scenes/CombatScene.unity
+  - enabled: 0
+    path: Assets/Scenes/OldCombat.unity
     guid: ffbab1e33dc816849960cb7027118c36
+  - enabled: 0
+    path: Assets/Scenes/CombatScene V3.unity
+    guid: c52599b215bfed9489e7ce2df626cb42
   m_configObjects: {}

@@ -31,7 +31,6 @@ public class MenuController : MonoBehaviour
 
     public void OnPlayButton()
     {
-        Debug.Log("JOGAR");
         StartCoroutine(LoadScene());
     }
 
@@ -53,9 +52,14 @@ public class MenuController : MonoBehaviour
         _menuGroups[1].SetActive(true);
     }
 
+    public void OnQuitButton()
+    {
+        DisableAllGroups();
+        Application.Quit();
+    }
+
     public IEnumerator LoadScene()
     {
-        Debug.Log("JOGAR");
         DisableAllGroups();
         _target = 0;
         _progressBar.fillAmount = 0;

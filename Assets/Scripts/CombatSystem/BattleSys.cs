@@ -47,9 +47,6 @@ public class BattleSys : MonoBehaviour
 
     protected bool endgame;
 
-    int turnPlayer = 0;
-    int turnEnemy = 0;
-
     void Start()
     {
         healUsed = skillUsed = endgame = false;
@@ -148,7 +145,6 @@ public class BattleSys : MonoBehaviour
 
         Target = null;
 
-        //FALTA CONFIGURAR O UI INICIAL
         PlayerCharacters = playerPrefab[0].GetComponent<Player>();
 
         EnemyCharacters = enemyPrefab[0].GetComponent<Enemy>();
